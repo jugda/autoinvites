@@ -1,0 +1,18 @@
+{
+  "name": "autoinvites",
+  "version": "1.0.0",
+  "description": "Automatic email invites based on iCal entries",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Niko Köbler, http://www.n-k.de, @dasniko",
+  "license": "MIT",
+  "dependencies": {
+    "ical": "^0.4.0",
+    "moment": "^2.10.6",
+    "nodemailer": "^1.10.0",
+    "strip": "0.0.7"
+  },
+  "repository": "https://github.com/jugda/autoinvites"
+}
