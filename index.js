@@ -2,27 +2,16 @@ var ical = require('ical');
 var moment = require('moment');
 var nodemailer = require('nodemailer');
 var strip = require('strip');
+var config = require('./config');
 
-var transporter = nodemailer.createTransport({
-    host: 'localhost',
-    port: 465,
-    secure: true,
-    auth: {
-        user: '',
-        pass: ''
-    }
-});
-
-var mailOptions = {
-    from: 'JUG DA <info@jug-da.de>',
-    to: 'jug-da-info@groups.google.com'
-};
+var transporter = nodemailer.createTransport(config.smtp);
+var mailOptions = config.mailOptions;
 
 moment.locale('de');
 var oneWeek = moment().add(7, 'days').startOf('day');
 var twoDays = moment().add(2, 'days').startOf('day');
 
-ical.fromURL('http://www.jug-da.de/events.ics', {}, function(err, data) {
+ical.fromURL(config.ical_url, {}, function(err, data) {
   if (err) {
     console.error(err);
   } else {
