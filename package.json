@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "ical": "^0.4.0",
+    "minimist": "^1.2.0",
     "moment": "^2.10.6",
     "nodemailer": "^1.10.0",
     "strip": "0.0.7"

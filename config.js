@@ -1,20 +1,24 @@
+var argv = require('minimist')(process.argv.slice(2));
+
 config = {};
 
 config.smtp = {
-  host: 'localhost',
-  port: 465,
-  secure: true,
+  host: argv.smtp_host || 'localhost',
+  port: argv.smtp_port || 465,
+  secure: argv.smtp_secure || true,
   auth: {
-      user: '',
-      pass: ''
+      user: argv.smtp_user || '',
+      pass: argv.smtp_pass || ''
   }
 };
 
 config.mailOptions = {
-  from: 'JUG DA <info@jug-da.de>',
-  to: 'jug-da-info@groups.google.com'
+  from: argv.from || 'JUG DA <info@jug-da.de>',
+  to: argv.to || 'jug-da-info@groups.google.com'
 };
 
-config.ical_url = 'http://www.jug-da.de/events.ics';
+config.ical_url = argv.ical_url || 'http://www.jug-da.de/events.ics';
+
+if (argv.print_config) console.log(config);
 
 module.exports = config;
