@@ -15,5 +15,9 @@
     "nodemailer": "^1.10.0",
     "strip": "0.0.7"
   },
-  "repository": "https://github.com/jugda/autoinvites"
+  "repository": "https://github.com/jugda/autoinvites",
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "engineStrict": true
 }
