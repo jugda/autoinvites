@@ -20,7 +20,7 @@ ical.fromURL(config.ical_url, {}, function(err, data) {
         var ev = data[k];
         if (ev.start) {
           var m = moment(ev.start).startOf('day');
-          if (m.isSame(oneWeek) || m.isSame(twoDays)) {
+          if (m.isSame(oneWeek) || m.isSame(twoDays) || config.now) {
             mailOptions.html = buildMailText(ev);
             mailOptions.text = strip(mailOptions.html);
             mailOptions.subject = moment(ev.start).format('DD.MM.YYYY') + ': ' + ev.summary;

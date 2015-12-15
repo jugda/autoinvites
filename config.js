@@ -1,6 +1,8 @@
 var argv = require('minimist')(process.argv.slice(2));
 
-config = {};
+config = {
+  now: parseBoolean(argv.now, false)
+};
 
 config.smtp = {
   host: argv.smtp_host || 'localhost',
