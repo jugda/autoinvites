@@ -1,17 +1,20 @@
 var gulp = require('gulp');
-var del = require('del');
 var zip = require('gulp-zip');
+var rimraf = require('gulp-rimraf');
 
 var zipName = 'autoinvites.zip';
 
 gulp.task('default', ['zip']);
 
-gulp.task('zip', function() {
-  return gulp.src(['./**'])
+gulp.task('zip', ['clean:zip'], function() {
+  return gulp.src(
+      ['./*.js', 'node_modules/**/*'],
+      {base: '.'})
 		.pipe(zip(zipName))
 		.pipe(gulp.dest('.'));
 });
 
-gulp.task('delete', function() {
-  return del(zipName);
+gulp.task('clean:zip', function() {
+  return gulp.src(zipName)
+    .pipe(rimraf());
 });

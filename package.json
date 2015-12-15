@@ -15,14 +15,14 @@
     "nodemailer": "^1.10.0",
     "strip": "0.0.7"
   },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-rimraf": "^0.2.0",
+    "gulp-zip": "^3.0.2"
+  },
   "repository": "https://github.com/jugda/autoinvites",
   "engines": {
     "node": ">=4.0.0"
   },
-  "engineStrict": true,
-  "devDependencies": {
-    "del": "^2.2.0",
-    "gulp": "^3.9.0",
-    "gulp-zip": "^3.0.2"
-  }
+  "engineStrict": true
 }
