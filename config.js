@@ -1,5 +1,15 @@
 var argv = require('minimist')(process.argv.slice(2));
 
+
+var parseBoolean = function(arg, defaultValue) {
+  if (arg) {
+    regexp = /^(?:yes|y|true|t|on|1|ok)$/i;
+    return typeof arg === 'string' && arg.search(regexp) != -1;
+  }
+  return defaultValue;
+}
+
+
 config = {
   now: parseBoolean(argv.now, false)
 };
@@ -17,7 +27,7 @@ config.smtp = {
 
 config.mailOptions = {
   from: argv.from || 'JUG DA <info@jug-da.de>',
-  to: argv.to || 'jug-da-info@groups.google.com'
+  to: argv.to || 'jug-da-orga@groups.google.com'
 };
 
 config.ical_url = argv.ical_url || 'http://www.jug-da.de/events.ics';
@@ -25,12 +35,3 @@ config.ical_url = argv.ical_url || 'http://www.jug-da.de/events.ics';
 if (argv.print_config) console.log(config);
 
 module.exports = config;
-
-
-var parseBoolean = function(arg, defaultValue) {
-  if (arg) {
-    regexp = /^(?:yes|y|true|t|on|1|ok)$/i;
-    return typeof arg === 'string' && arg.search(regexp) != -1;
-  }
-  return defaultValue;
-}
