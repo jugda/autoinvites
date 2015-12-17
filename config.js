@@ -1,5 +1,6 @@
 var argv = require('minimist')(process.argv.slice(2));
 
+
 var parseBoolean = function(arg, defaultValue) {
   if (arg) {
     regexp = /^(?:yes|y|true|t|on|1|ok)$/i;
@@ -7,6 +8,7 @@ var parseBoolean = function(arg, defaultValue) {
   }
   return defaultValue;
 }
+
 
 config = {
   now: parseBoolean(argv.now, false)
@@ -25,7 +27,14 @@ config.smtp = {
 
 config.mailOptions = {
   from: argv.from || 'JUG DA <info@jug-da.de>',
-  to: argv.to || 'jug-da-info@groups.google.com'
+  to: argv.to || 'jug-da-orga@groups.google.com'
+};
+
+config.twitter = {
+  consumer_key: '',
+  consumer_secret: '',
+  access_token_key: '',
+  access_token_secret: ''
 };
 
 config.ical_url = argv.ical_url || 'http://www.jug-da.de/events.ics';

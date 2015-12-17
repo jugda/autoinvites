@@ -13,7 +13,13 @@
     "minimist": "^1.2.0",
     "moment": "^2.10.6",
     "nodemailer": "^1.10.0",
-    "strip": "0.0.7"
+    "strip": "0.0.7",
+    "twitter": "^1.2.5"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-rimraf": "^0.2.0",
+    "gulp-zip": "^3.0.2"
   },
   "repository": "https://github.com/jugda/autoinvites",
   "engines": {
