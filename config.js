@@ -30,6 +30,13 @@ config.mailOptions = {
   to: argv.to || 'jug-da-orga@groups.google.com'
 };
 
+config.twitter = {
+  consumer_key: '',
+  consumer_secret: '',
+  access_token_key: '',
+  access_token_secret: ''
+};
+
 config.ical_url = argv.ical_url || 'http://www.jug-da.de/events.ics';
 
 if (argv.print_config) console.log(config);

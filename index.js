@@ -2,6 +2,7 @@ var ical = require('ical');
 var moment = require('moment');
 var config = require('./config');
 var mail = require('./mail');
+var twitter = require('./tweet');
 
 exports.handler = function(event, context) {
   var transporter = nodemailer.createTransport(config.smtp);
