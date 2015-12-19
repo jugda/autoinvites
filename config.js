@@ -7,7 +7,7 @@ var parseBoolean = function(arg, defaultValue) {
     return typeof arg === 'string' && arg.search(regexp) != -1;
   }
   return defaultValue;
-}
+};
 
 
 config = {

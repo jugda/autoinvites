@@ -12,7 +12,7 @@ var buildMailText = function(ev) {
       + '<p>Alle Infos zum Talk, Anfahrtsbeschreibung und Anmeldung wie immer auf unserer Website:<br/>'
       + '<a href="' + ev.url + '">' + ev.url + '</a></p>'
       + '<p>Wir freuen uns auf Euer zahlreiches Kommen!<br/><br/>Viele Grüße,<br/>Euer JUG DA Orga-Team</p>';
-}
+};
 
 var sendMail = function(ev) {
   var transporter = nodemailer.createTransport(config.smtp);
@@ -28,6 +28,6 @@ var sendMail = function(ev) {
       }
       console.log('Message sent: ' + info.response);
   });
-}
+};
 
 module.exports = sendMail;

@@ -9,7 +9,7 @@ var buildStatus = function(ev) {
 
 var tweet = function(ev) {
   var params = {
-    status: buildStatus(ev);
+    status: buildStatus(ev)
   };
 
   client.post('statuses/update', params, function(error, tweet, response) {

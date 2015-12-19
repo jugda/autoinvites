@@ -2,12 +2,9 @@ var ical = require('ical');
 var moment = require('moment');
 var config = require('./config');
 var mail = require('./mail');
-var twitter = require('./tweet');
+//var tweet = require('./tweet');
 
 exports.handler = function(event, context) {
-  var transporter = nodemailer.createTransport(config.smtp);
-  var mailOptions = config.mailOptions;
-
   moment.locale('de');
   var today = moment().startOf('day');
 
@@ -58,4 +55,4 @@ exports.handler = function(event, context) {
       }
     }
   });
-}
+};
