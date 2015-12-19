@@ -18,38 +18,8 @@ exports.handler = function(event, context) {
           if (ev.start) {
             var m = moment(ev.start).startOf('day');
             var diff = m.diff(today, 'days');
-            
-            switch (diff) {
-              case 0:
-
-                break;
-              case 1:
-
-                break;
-              case 2:
-                mail(ev);
-                break;
-              case 3:
-
-                break;
-              case 4:
-
-                break;
-              case 5:
-
-                break;
-              case 6:
-
-                break;
-              case 7:
-                mail(ev);
-                break;
-              default:
-                if (config.now) {
-                  mail(ev);
-                }
-                break;
-            }
+            mail(ev, diff);
+            //tweet(ev, diff);
           }
         }
       }

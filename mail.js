@@ -14,20 +14,22 @@ var buildMailText = function(ev) {
       + '<p>Wir freuen uns auf Euer zahlreiches Kommen!<br/><br/>Viele Grüße,<br/>Euer JUG DA Orga-Team</p>';
 };
 
-var sendMail = function(ev) {
-  var transporter = nodemailer.createTransport(config.smtp);
-  var mailOptions = config.mailOptions;
+var sendMail = function(ev, day) {
+  if (config.days.mail.indexOf(day) > -1 || config.now) {
+    var transporter = nodemailer.createTransport(config.smtp);
+    var mailOptions = config.mailOptions;
 
-  mailOptions.html = buildMailText(ev);
-  mailOptions.text = strip(mailOptions.html);
-  mailOptions.subject = moment(ev.start).format('DD.MM.YYYY') + ': ' + ev.summary;
+    mailOptions.html = buildMailText(ev);
+    mailOptions.text = strip(mailOptions.html);
+    mailOptions.subject = moment(ev.start).format('DD.MM.YYYY') + ': ' + ev.summary;
 
-  transporter.sendMail(mailOptions, function(error, info) {
+    transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
-          return console.log(error);
+        return console.log(error);
       }
       console.log('Message sent: ' + info.response);
-  });
+    });
+  }
 };
 
 module.exports = sendMail;
