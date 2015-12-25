@@ -31,7 +31,7 @@ config.smtp = {
 
 config.mailOptions = {
   from: argv.from || 'JUG DA <info@jug-da.de>',
-  to: argv.to || 'jug-da-orga@groups.google.com'
+  to: argv.to || 'jug-da@googlegroups.com'
 };
 
 config.twitter = {
