@@ -5,6 +5,7 @@ var mail = require('./mail');
 //var tweet = require('./tweet');
 
 exports.handler = function(event, context) {
+  console.log('starting function');
   moment.locale('de');
   var today = moment().startOf('day');
 
@@ -16,6 +17,7 @@ exports.handler = function(event, context) {
         if (data.hasOwnProperty(k)) {
           var ev = data[k];
           if (ev.start) {
+            console.log('processing event id ' + ev.uid);
             var m = moment(ev.start).startOf('day');
             var diff = m.diff(today, 'days');
             mail(ev, diff);
