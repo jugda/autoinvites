@@ -13,18 +13,21 @@ exports.handler = function(event, context) {
     if (err) {
       console.error(err);
     } else {
-      for (var k in data){
+      for (var k in data) {
         if (data.hasOwnProperty(k)) {
           var ev = data[k];
           if (ev.start) {
-            console.log('processing event id ' + ev.uid);
             var m = moment(ev.start).startOf('day');
             var diff = m.diff(today, 'days');
+            console.log('processing event id ' + ev.uid + " / days: " + diff);
             mail(ev, diff);
-            //tweet(ev, diff);
           }
         }
       }
+
+      setTimeout(function() {
+        context.done();
+      }, 3000);
     }
   });
 };

@@ -4,7 +4,7 @@ module.exports = {
   role: '<role_arn>',
   functionName: 'sendInvites',
   description: 'Automatic email invites based on iCal entries',
-  timeout: 3,
+  timeout: 5,
   memorySize: 128,
   runtime: 'nodejs'
 }
