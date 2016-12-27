@@ -15,7 +15,7 @@ var buildMailText = function(ev) {
 };
 
 var sendMail = function(ev, day) {
-  if (config.days.mail.indexOf(day) > -1 || config.now) {
+  if (config.days.mail.indexOf(day) > -1) {
     console.log('prepare mail to send for event uid ' + ev.uid);
     var transporter = nodemailer.createTransport(config.smtp);
     var mailOptions = config.mailOptions;

@@ -1,48 +1,26 @@
-var argv = require('minimist')(process.argv.slice(2));
-
-
-var parseBoolean = function(arg, defaultValue) {
-  if (arg) {
-    regexp = /^(?:yes|y|true|t|on|1|ok)$/i;
-    return typeof arg === 'string' && arg.search(regexp) != -1;
-  }
-  return defaultValue;
-};
-
-
 config = {
   days: {
     mail: [2,7],
     twitter: [0,1,2,3,4,5,6,7]
-  },
-  now: parseBoolean(argv.now, false)
+  }
 };
 
 config.smtp = {
-  host: argv.smtp_host || 'localhost',
-  port: argv.smtp_port || 465,
-  secure: parseBoolean(argv.smtp_secure, true),
-  debug: parseBoolean(argv.smtp_debug, false),
+  host: '',
+  port: 465,
+  secure: true,
+  debug: false,
   auth: {
-      user: argv.smtp_user || '',
-      pass: argv.smtp_pass || ''
+      user: '',
+      pass: ''
   }
 };
 
 config.mailOptions = {
-  from: argv.from || 'JUG DA <info@jug-da.de>',
-  to: argv.to || 'jug-da@googlegroups.com'
+  from: 'JUG DA <info@jug-da.de>',
+  to: 'jug-da@googlegroups.com'
 };
 
-config.twitter = {
-  consumer_key: '',
-  consumer_secret: '',
-  access_token_key: '',
-  access_token_secret: ''
-};
-
-config.ical_url = argv.ical_url || 'http://www.jug-da.de/events.ics';
-
-if (argv.print_config) console.log(config);
+config.events_url = 'http://www.jug-da.de/events.json';
 
 module.exports = config;
