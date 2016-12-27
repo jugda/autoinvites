@@ -6,13 +6,13 @@ config = {
 };
 
 config.smtp = {
-  host: '',
+  host: process.env.SMTP_HOST,
   port: 465,
   secure: true,
   debug: false,
   auth: {
-      user: '',
-      pass: ''
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASSWORD
   }
 };
 
