@@ -1,24 +1,23 @@
-var Twitter = require('twitter');
-var config = require('./config');
+const Twitter = require('twitter');
+const config = require('./config');
 
-var client = new Twitter(config.twitter);
+const client = new Twitter(config.twitter);
 
-var buildStatus = function(ev) {
+const buildStatus = (ev) => {
   return moment(ev.start).format('DD.MM.') + ': ' + ev.summary.substr(0, (140-8-25)) + " " + ev.url;
 };
 
-var tweet = function(ev, day) {
+const tweet = (ev, day) => {
   if (config.days.twitter.indexOf(day) > -1) {
-    var params = {
+    const params = {
       status: buildStatus(ev)
     };
 
-    client.post('statuses/update', params, function (error, tweet, response) {
-      if (!error) {
-        console.log(tweet);
-      } else {
-        console.log(error);
+    client.post('statuses/update', params, (error, tweet, response) => {
+      if (error) {
+        throw error;
       }
+      console.log(tweet);
     });
   }
 };

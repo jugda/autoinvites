@@ -1,32 +1,28 @@
-var http = require('http');
-var moment = require('moment');
-var config = require('./config');
-var mail = require('./mail');
+const http = require('http');
+const moment = require('moment');
+const config = require('./config');
+const mail = require('./mail');
 
-exports.handler = function(event, context) {
+exports.handler = (event, context, callback) => {
   console.log('starting function');
   moment.locale('de');
-  var today = moment().startOf('day');
+  const today = moment().startOf('day');
 
-  http.get(config.events_url, function(res) {
-    var body = '';
-    res.on('data', function(chunk) {body += chunk});
-    res.on('end', function() {
-      var data = JSON.parse(body);
-      var event = data[0];
+  http.get(config.events_url, (res) => {
+    let body = '';
+    res.on('data', (chunk) => {body += chunk});
+    res.on('end', () => {
+      const data = JSON.parse(body);
+      const event = data[0];
       if (event.start) {
-        var m = moment(event.start).startOf('day');
-        var diff = m.diff(today, 'days');
+        const m = moment(event.start).startOf('day');
+        const diff = m.diff(today, 'days');
         console.log('processing event id ' + event.uid + " / days: " + diff);
         mail(event, diff);
       }
     });
-  }).on('error', function(e) {
-    console.error(e);
+  }).on('error', (e) => {
+    callback(e)
   });
-
-  setTimeout(function() {
-    context.done();
-  }, 3000);
 
 };
