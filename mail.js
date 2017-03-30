@@ -11,7 +11,8 @@ const buildMailText = (ev) => {
       + '<p>Ort: ' + ev.location + '</p>'
       + '<p>Alle Infos zum Talk, Anfahrtsbeschreibung und Anmeldung wie immer auf unserer Website:<br/>'
       + '<a href="' + ev.url + '">' + ev.url + '</a></p>'
-      + '<p>Wir freuen uns auf Euer zahlreiches Kommen!<br/><br/>Viele Grüße,<br/>Euer JUG DA Orga-Team</p>';
+      + '<p>Wir freuen uns auf Euer zahlreiches Kommen!<br/><br/>Viele Grüße,<br/>Euer JUG DA Orga-Team</p>'
+      + '<p><small><i>Eine Veranstaltung des iJUG e.V. organisiert durch die JUG Darmstadt.</i></small></p>';
 };
 
 const sendMail = (ev, day) => {
