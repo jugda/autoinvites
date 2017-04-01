@@ -4,7 +4,7 @@ const config = require('./config');
 const mail = require('./mail');
 
 exports.handler = (event, context, callback) => {
-  console.log('starting function');
+  console.log('starting function with event:', JSON.stringify(event, null, 2));
   moment.locale('de');
   const today = moment().startOf('day');
 
@@ -22,6 +22,7 @@ exports.handler = (event, context, callback) => {
       }
     });
   }).on('error', (e) => {
+    console.error("ERROR", e);
     callback(e)
   });
 
