@@ -7,6 +7,11 @@ provider:
   memorySize: 128
   timeout: 10
   stage: prod
+  deploymentBucket: dasniko.serverless.deployments.${self:provider.region}
+  environment:
+    SMTP_HOST: ${file(sls-props.yml):smtp.host}
+    SMTP_PASSWORD: ${file(sls-props.yml):smtp.password}
+    SMTP_USER: ${file(sls-props.yml):smtp.user}
 
 functions:
   cron:
