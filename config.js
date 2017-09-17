@@ -21,6 +21,6 @@ config.mailOptions = {
   to: 'jug-da@googlegroups.com'
 };
 
-config.events_url = 'http://www.jug-da.de/events.json';
+config.events_url = process.env.EVENTS_URL;
 
 module.exports = config;
