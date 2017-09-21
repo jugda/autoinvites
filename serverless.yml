@@ -8,6 +8,16 @@ provider:
   timeout: 10
   stage: prod
   deploymentBucket: dasniko.serverless.deployments.${self:provider.region}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - sns:Publish
+      Resource: "${file(sls-props.yml):dlq}"
+    - Effect: Allow
+      Action:
+        - xray:PutTraceSegments
+        - xray:PutTelemetryRecords
+      Resource: "*"
   environment:
     EVENTS_URL: ${file(sls-props.yml):events_url}
     SMTP_HOST: ${file(sls-props.yml):smtp.host}
@@ -20,3 +30,4 @@ functions:
     events:
       # Invoke Lambda function every day at 10am (GMT)
       - schedule: cron(0 10 * * ? *)
+    onError: "${file(sls-props.yml):dlq}"
