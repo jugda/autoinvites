@@ -1,7 +1,8 @@
 const moment = require('moment');
 const nodemailer = require('nodemailer');
 const strip = require('strip');
-const config = require('./config');
+
+const days = [2, 7];
 
 const buildMailText = (ev) => {
   const date = moment(ev.start).format('dddd, DD. MMMM YYYY');
@@ -16,10 +17,22 @@ const buildMailText = (ev) => {
 };
 
 const sendMail = (ev, day) => {
-  if (config.days.mail.indexOf(day) > -1) {
+  if (days.indexOf(day) > -1) {
     console.log('prepare mail to send for event uid ' + ev.uid);
-    const transporter = nodemailer.createTransport(config.smtp);
-    const mailOptions = config.mailOptions;
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: 465,
+      secure: true,
+      debug: false,
+      auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASSWORD
+      }
+    });
+    const mailOptions = {
+      from: 'JUG DA <info@jug-da.de>',
+      to: 'jug-da@googlegroups.com'
+    };
 
     mailOptions.html = buildMailText(ev);
     mailOptions.text = strip(mailOptions.html);

@@ -1,6 +1,5 @@
 const http = require('http');
 const moment = require('moment');
-const config = require('./config');
 const mail = require('./mail');
 const tweet = require('./tweet');
 
@@ -9,7 +8,7 @@ exports.handler = (event, context, callback) => {
   moment.locale('de');
   const today = moment().startOf('day');
 
-  http.get(config.events_url, (res) => {
+  http.get(process.env.EVENTS_URL, (res) => {
     let body = '';
     res.on('data', (chunk) => {body += chunk});
     res.on('end', () => {

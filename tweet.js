@@ -1,5 +1,4 @@
 const Twitter = require('twitter');
-const config = require('./config');
 
 const client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -8,12 +7,14 @@ const client = new Twitter({
   access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 });
 
+const days = [2, 7];
+
 const buildStatus = (ev) => {
   return moment(ev.start).format('DD.MM.') + ': ' + ev.summary.substr(0, (140-8-25)) + " " + ev.url;
 };
 
 const tweet = (ev, day) => {
-  if (config.days.twitter.indexOf(day) > -1) {
+  if (days.indexOf(day) > -1) {
     console.log('prepare tweet for event uid ' + ev.uid);
     const params = {
       status: buildStatus(ev)
