@@ -2,6 +2,7 @@ const http = require('http');
 const moment = require('moment');
 const config = require('./config');
 const mail = require('./mail');
+const tweet = require('./tweet');
 
 exports.handler = (event, context, callback) => {
   console.log('starting function with event:', JSON.stringify(event, null, 2));
@@ -19,6 +20,7 @@ exports.handler = (event, context, callback) => {
         const diff = m.diff(today, 'days');
         console.log('processing event id ' + event.uid + " / days: " + diff);
         mail(event, diff);
+        tweet(event, diff);
       }
     });
   }).on('error', (e) => {

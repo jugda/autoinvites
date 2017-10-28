@@ -9,9 +9,10 @@
   "author": "Niko Köbler, http://www.n-k.de, @dasniko",
   "license": "MIT",
   "dependencies": {
-    "moment": "^2.17.1",
+    "moment": "^2.19.1",
     "nodemailer": "^2.7.0",
-    "strip": "3.0.0"
+    "strip": "3.0.0",
+    "twitter": "^1.7.1"
   },
   "repository": "https://github.com/jugda/autoinvites"
 }

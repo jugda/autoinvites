@@ -23,6 +23,10 @@ provider:
     SMTP_HOST: ${file(sls-props.yml):smtp.host}
     SMTP_PASSWORD: ${file(sls-props.yml):smtp.password}
     SMTP_USER: ${file(sls-props.yml):smtp.user}
+    TWITTER_CONSUMER_KEY: ${file(sls-props.yml):twitter.consumer_key}
+    TWITTER_CONSUMER_SECRET: ${file(sls-props.yml):twitter.consumer_secret}
+    TWITTER_ACCESS_TOKEN_KEY: ${file(sls-props.yml):twitter.access_token_key}
+    TWITTER_ACCESS_TOKEN_SECRET: ${file(sls-props.yml):twitter.access_token_secret}
 
 functions:
   cron:
