@@ -11,7 +11,9 @@ const client = new Twitter({
 const days = [2, 7];
 
 const buildStatus = (ev) => {
-  return moment(ev.start).format('DD.MM.') + ': ' + ev.summary.substr(0, (140-8-25)) + " " + ev.url;
+  // max tweet length (140) - date length (dd.mm.: = 8) - link length (currently max. 24 + 1 space = 25)
+  const maxLength = 140 - 8 - 25;
+  return moment(ev.start).format('DD.MM.') + ': ' + ev.summary.substr(0, maxLength) + " " + ev.url;
 };
 
 const tweet = (ev, day) => {
