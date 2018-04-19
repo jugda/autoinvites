@@ -28,6 +28,13 @@ provider:
     TWITTER_ACCESS_TOKEN_KEY: ${file(sls-props.yml):twitter.access_token_key}
     TWITTER_ACCESS_TOKEN_SECRET: ${file(sls-props.yml):twitter.access_token_secret}
 
+package:
+  exclude:
+   - sls-props.yml
+   - yarn.lock
+   - *.iml
+   - .idea/**
+
 functions:
   cron:
     handler: index.handler
