@@ -1,15 +1,12 @@
 {
   "name": "autoinvites",
-  "version": "1.0.0",
-  "description": "Automatic email invites based on iCal entries",
+  "version": "1.1.0",
+  "description": "Automatic email invites based on our events JSON feed.",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "Niko Köbler, http://www.n-k.de, @dasniko",
   "license": "MIT",
   "dependencies": {
-    "moment": "^2.19.1",
+    "moment": "^2.22.2",
     "nodemailer": "^2.7.0",
     "strip": "3.0.0",
     "twitter": "^1.7.1"

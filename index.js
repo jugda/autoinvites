@@ -1,14 +1,14 @@
-const http = require('http');
+const https = require('https');
 const moment = require('moment');
 const mail = require('./mail');
 const tweet = require('./tweet');
 
 exports.handler = (event, context, callback) => {
-  console.log('starting function with event:', JSON.stringify(event, null, 2));
+  console.log('Received event:', JSON.stringify(event, null, 2));
   moment.locale('de');
   const today = moment().startOf('day');
 
-  http.get(process.env.EVENTS_URL, (res) => {
+  https.get(process.env.EVENTS_URL, (res) => {
     let body = '';
     res.on('data', (chunk) => {body += chunk});
     res.on('end', () => {
