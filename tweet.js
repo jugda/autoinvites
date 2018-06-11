@@ -15,7 +15,7 @@ const buildStatus = (ev) => {
   if (ev.speaker) {
     status = status + ' (' + ev.speaker;
     if (ev.twitter) {
-      status = status + ' / ' + ev.twitter;
+      status = status + ' / @' + ev.twitter;
     }
     status = status + ')';
   }
