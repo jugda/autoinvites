@@ -8,10 +8,11 @@ const client = new Twitter({
   access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 });
 
-const days = [2, 7];
+const days = [0, 2, 7];
 
-const buildStatus = (ev) => {
-  let status = moment(ev.start).format('DD.MM.') + ': ' + ev.title;
+const buildStatus = (ev, day) => {
+  let status = day === 0 ? '!!!HEUTE!!! ' : moment(ev.start).format('DD.MM.') + ": ";
+  status = status + ev.title;
   if (ev.speaker) {
     status = status + ' (' + ev.speaker;
     if (ev.twitter) {
@@ -27,7 +28,7 @@ const tweet = (ev, day) => {
   if (days.indexOf(day) > -1) {
     console.log('prepare tweet for event uid ' + ev.uid);
     const params = {
-      status: buildStatus(ev)
+      status: buildStatus(ev, day)
     };
 
     client.post('statuses/update', params, (error, tweet, response) => {
