@@ -13,14 +13,15 @@ exports.handler = (event, context, callback) => {
     res.on('data', (chunk) => {body += chunk});
     res.on('end', () => {
       const data = JSON.parse(body);
-      const event = data[0];
-      if (event.start) {
-        const m = moment(event.start).startOf('day');
-        const diff = m.diff(today, 'days');
-        console.log('processing event id ' + event.uid + " / days: " + diff);
-        mail(event, diff);
-        tweet(event, diff);
-      }
+      data.forEach(event => {
+        if (event.start) {
+          const m = moment(event.start).startOf('day');
+          const diff = m.diff(today, 'days');
+          console.log('processing event id ' + event.uid + " / days: " + diff);
+          mail(event, diff);
+          tweet(event, diff);
+        }
+      });
     });
   }).on('error', (e) => {
     console.error("ERROR", e);
