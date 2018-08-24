@@ -6,8 +6,8 @@
   "author": "Niko Köbler, http://www.n-k.de, @dasniko",
   "license": "MIT",
   "dependencies": {
+    "aws-sdk": "^2.300.0",
     "moment": "^2.22.2",
-    "nodemailer": "^2.7.0",
     "strip": "3.0.0",
     "twitter": "^1.7.1"
   },

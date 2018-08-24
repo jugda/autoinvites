@@ -11,6 +11,10 @@ provider:
   iamRoleStatements:
     - Effect: Allow
       Action:
+        - ses:SendEmail
+      Resource: "${file(sls-props.yml):mail.identity}"
+    - Effect: Allow
+      Action:
         - sns:Publish
       Resource: "${file(sls-props.yml):dlq}"
     - Effect: Allow
@@ -20,9 +24,8 @@ provider:
       Resource: "*"
   environment:
     EVENTS_URL: ${file(sls-props.yml):events_url}
-    SMTP_HOST: ${file(sls-props.yml):smtp.host}
-    SMTP_PASSWORD: ${file(sls-props.yml):smtp.password}
-    SMTP_USER: ${file(sls-props.yml):smtp.user}
+    MAIL_TO: ${file(sls-props.yml):mail.to}
+    MAIL_FROM: ${file(sls-props.yml):mail.from}
     TWITTER_CONSUMER_KEY: ${file(sls-props.yml):twitter.consumer_key}
     TWITTER_CONSUMER_SECRET: ${file(sls-props.yml):twitter.consumer_secret}
     TWITTER_ACCESS_TOKEN_KEY: ${file(sls-props.yml):twitter.access_token_key}
@@ -30,6 +33,7 @@ provider:
 
 package:
   exclude:
+   - node_modules/aws-sdk/**
    - sls-props.yml
    - yarn.lock
    - autoinvites.iml
