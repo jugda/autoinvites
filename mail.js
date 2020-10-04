@@ -4,7 +4,7 @@ const moment = require('moment');
 const handlebars = require('handlebars');
 const strip = require('strip');
 
-AWS.config.update({region: 'eu-west-1'});
+// AWS.config.update({region: 'eu-central-1'});
 const ses = new AWS.SES({apiVersion: '2010-12-01'});
 
 const days = [2, 7, 28];
