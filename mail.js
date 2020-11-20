@@ -17,7 +17,7 @@ const getUtf8Data = data => {
 };
 
 const sendMail = (ev, day) => {
-  if (days.indexOf(day) > -1) {
+  if (!ev.externalEvent && days.indexOf(day) > -1) {
     if (day !== 28 || !ev.hideRegistration) {
       console.log('prepare mail to send for event uid ' + ev.uid);
 
