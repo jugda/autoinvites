@@ -15,28 +15,20 @@ provider:
       Action:
         - ses:SendEmail
       Resource: "arn:aws:ses:${self:provider.region}:*:identity/jug-da.de"
-    - Effect: Allow
-      Action:
-        - sns:Publish
-      Resource: "${file(sls-props.yml):dlq}"
-    - Effect: Allow
-      Action:
-        - xray:PutTraceSegments
-        - xray:PutTelemetryRecords
-      Resource: "*"
   environment:
-    EVENTS_URL: ${file(sls-props.yml):events_url}
-    MAIL_TO: ${file(sls-props.yml):mail.to}
-    MAIL_FROM: ${file(sls-props.yml):mail.from}
-    TWITTER_CONSUMER_KEY: ${file(sls-props.yml):twitter.consumer_key}
-    TWITTER_CONSUMER_SECRET: ${file(sls-props.yml):twitter.consumer_secret}
-    TWITTER_ACCESS_TOKEN_KEY: ${file(sls-props.yml):twitter.access_token_key}
-    TWITTER_ACCESS_TOKEN_SECRET: ${file(sls-props.yml):twitter.access_token_secret}
+    EVENTS_URL: ${self:custom.eventsUrl}
+    MAIL_TO: ${self:custom.mail.to}
+    MAIL_FROM: ${self:custom.mail.from}
+    TWITTER_CONSUMER_KEY: ${self:custom.twitter.consumer_key}
+    TWITTER_CONSUMER_SECRET: ${self:custom.twitter.consumer_secret}
+    TWITTER_ACCESS_TOKEN_KEY: ${self:custom.twitter.access_token_key}
+    TWITTER_ACCESS_TOKEN_SECRET: ${self:custom.twitter.access_token_secret}
+
+custom: ${ssm:/aws/reference/secretsmanager/jugda-autoinvites~true}
 
 package:
   exclude:
    - node_modules/aws-sdk/**
-   - sls-props.yml
    - yarn.lock
    - autoinvites.iml
    - .idea/**
@@ -47,4 +39,4 @@ functions:
     events:
       # Invoke Lambda function every weekday at 9am (UTC)
       - schedule: cron(0 9 ? * MON-FRI *)
-    onError: "${file(sls-props.yml):dlq}"
+    onError: ${self:custom.dlq}
