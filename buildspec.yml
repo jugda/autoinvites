@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: latest
+    commands:
+      - npm install yarn
+      - npm install serverless
+  build:
+    commands:
+      - node_modules/.bin/yarn install
+  post_build:
+    commands:
+      - node_modules/.bin/sls deploy
+
+cache:
+  paths:
+    - 'node_modules/**/*'
+    - '/root/.npm/**/*'
