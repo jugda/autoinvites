@@ -24,7 +24,7 @@ provider:
     TWITTER_ACCESS_TOKEN_KEY: ${self:custom.twitter.access_token_key}
     TWITTER_ACCESS_TOKEN_SECRET: ${self:custom.twitter.access_token_secret}
 
-custom: ${ssm:/aws/reference/secretsmanager/jugda-autoinvites~true}
+custom: ${ssm:/aws/reference/secretsmanager/jugda-secrets~true}.autoinvites
 
 package:
   exclude:
