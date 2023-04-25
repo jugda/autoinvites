@@ -7,31 +7,34 @@ provider:
   memorySize: 128
   timeout: 10
   stage: prod
-  deploymentBucket: dasniko.serverless.deployments.${self:provider.region}
+  deploymentBucket:
+    name: dasniko.serverless.deployments.${self:provider.region}
   tracing:
     lambda: true
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - ses:SendEmail
-      Resource: "arn:aws:ses:${self:provider.region}:*:identity/jug-da.de"
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - ses:SendEmail
+          Resource: "arn:aws:ses:${self:provider.region}:*:identity/jug-da.de"
   environment:
-    EVENTS_URL: ${self:custom.eventsUrl}
-    MAIL_TO: ${self:custom.mail.to}
-    MAIL_FROM: ${self:custom.mail.from}
-    TWITTER_CONSUMER_KEY: ${self:custom.twitter.consumer_key}
-    TWITTER_CONSUMER_SECRET: ${self:custom.twitter.consumer_secret}
-    TWITTER_ACCESS_TOKEN_KEY: ${self:custom.twitter.access_token_key}
-    TWITTER_ACCESS_TOKEN_SECRET: ${self:custom.twitter.access_token_secret}
+    EVENTS_URL: ${self:custom.autoinvites.eventsUrl}
+    MAIL_TO: ${self:custom.autoinvites.mail.to}
+    MAIL_FROM: ${self:custom.autoinvites.mail.from}
+    TWITTER_CONSUMER_KEY: ${self:custom.autoinvites.twitter.consumer_key}
+    TWITTER_CONSUMER_SECRET: ${self:custom.autoinvites.twitter.consumer_secret}
+    TWITTER_ACCESS_TOKEN_KEY: ${self:custom.autoinvites.twitter.access_token_key}
+    TWITTER_ACCESS_TOKEN_SECRET: ${self:custom.autoinvites.twitter.access_token_secret}
 
-custom: ${ssm:/aws/reference/secretsmanager/jugda-secrets~true}.autoinvites
+custom: ${ssm:/aws/reference/secretsmanager/jugda-secrets}
 
 package:
-  exclude:
-   - node_modules/aws-sdk/**
-   - yarn.lock
-   - autoinvites.iml
-   - .idea/**
+  patterns:
+    - '!node_modules/aws-sdk/**'
+    - '!yarn.lock'
+    - '!autoinvites.iml'
+    - '!.idea/**'
 
 functions:
   cron:
@@ -39,4 +42,4 @@ functions:
     events:
       # Invoke Lambda function every weekday at 9am (UTC)
       - schedule: cron(0 9 ? * MON-FRI *)
-    onError: ${self:custom.dlq}
+    onError: ${self:custom.autoinvites.dlq}
