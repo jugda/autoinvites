@@ -3,11 +3,12 @@
   "version": "1.1.0",
   "description": "Automatic email invites based on our events JSON feed.",
   "main": "index.js",
-  "author": "Niko Köbler, http://www.n-k.de, @dasniko",
+  "author": "Niko Köbler, https://www.n-k.de, @dasniko",
   "license": "MIT",
   "dependencies": {
     "aws-sdk": "^2.300.0",
     "handlebars": "^4.0.11",
+    "masto": "^5.11.2",
     "moment": "^2.22.2",
     "strip": "3.0.0",
     "twitter": "^1.7.1"

@@ -2,7 +2,7 @@ service: jugda-sendinvites
 
 provider:
   name: aws
-  runtime: nodejs16.x
+  runtime: nodejs18.x
   region: eu-central-1
   memorySize: 128
   timeout: 10
@@ -22,10 +22,12 @@ provider:
     EVENTS_URL: ${self:custom.autoinvites.eventsUrl}
     MAIL_TO: ${self:custom.autoinvites.mail.to}
     MAIL_FROM: ${self:custom.autoinvites.mail.from}
-    TWITTER_CONSUMER_KEY: ${self:custom.autoinvites.twitter.consumer_key}
-    TWITTER_CONSUMER_SECRET: ${self:custom.autoinvites.twitter.consumer_secret}
-    TWITTER_ACCESS_TOKEN_KEY: ${self:custom.autoinvites.twitter.access_token_key}
-    TWITTER_ACCESS_TOKEN_SECRET: ${self:custom.autoinvites.twitter.access_token_secret}
+    MASTO_URL: ${self:custom.autoinvites.masto.url}
+    MASTO_TOKEN: ${self:custom.autoinvites.masto.token}
+#    TWITTER_CONSUMER_KEY: ${self:custom.autoinvites.twitter.consumer_key}
+#    TWITTER_CONSUMER_SECRET: ${self:custom.autoinvites.twitter.consumer_secret}
+#    TWITTER_ACCESS_TOKEN_KEY: ${self:custom.autoinvites.twitter.access_token_key}
+#    TWITTER_ACCESS_TOKEN_SECRET: ${self:custom.autoinvites.twitter.access_token_secret}
 
 custom: ${ssm:/aws/reference/secretsmanager/jugda-secrets}
 
