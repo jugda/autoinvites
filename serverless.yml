@@ -29,7 +29,6 @@ custom: ${ssm:/aws/reference/secretsmanager/jugda-secrets}
 
 package:
   patterns:
-    - '!node_modules/aws-sdk/**'
     - '!yarn.lock'
     - '!autoinvites.iml'
     - '!.idea/**'

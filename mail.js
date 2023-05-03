@@ -1,10 +1,10 @@
 const fs = require('fs');
-const AWS = require('aws-sdk');
+const { SES } = require('aws-sdk');
 const moment = require('moment');
 const handlebars = require('handlebars');
 const strip = require('strip');
 
-const ses = new AWS.SES({apiVersion: '2010-12-01'});
+const ses = new SES({apiVersion: '2010-12-01'});
 
 const days = [2, 7, 28];
 
