@@ -24,10 +24,6 @@ provider:
     MAIL_FROM: ${self:custom.autoinvites.mail.from}
     MASTO_URL: ${self:custom.autoinvites.masto.url}
     MASTO_TOKEN: ${self:custom.autoinvites.masto.token}
-#    TWITTER_CONSUMER_KEY: ${self:custom.autoinvites.twitter.consumer_key}
-#    TWITTER_CONSUMER_SECRET: ${self:custom.autoinvites.twitter.consumer_secret}
-#    TWITTER_ACCESS_TOKEN_KEY: ${self:custom.autoinvites.twitter.access_token_key}
-#    TWITTER_ACCESS_TOKEN_SECRET: ${self:custom.autoinvites.twitter.access_token_secret}
 
 custom: ${ssm:/aws/reference/secretsmanager/jugda-secrets}
 

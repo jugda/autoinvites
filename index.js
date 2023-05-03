@@ -2,7 +2,6 @@ const https = require('https');
 const moment = require('moment');
 const mail = require('./mail');
 const toot = require('./toot');
-// const tweet = require('./tweet');
 
 exports.handler = (event, context, callback) => {
   console.log('Received event:', JSON.stringify(event, null, 2));
@@ -21,7 +20,6 @@ exports.handler = (event, context, callback) => {
           console.log('processing event id ' + event.uid + " / days: " + diff);
           mail(event, diff);
           toot(event, diff);
-          // tweet(event, diff);
         }
       });
     });
