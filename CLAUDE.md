@@ -22,6 +22,11 @@ npm start                      # one pass; needs the env in README.md
 through it, so the mail path is covered without touching a live relay. That is the test to
 extend if you change anything about the transport.
 
+Two workflows: `ci.yml` runs the tests on pull requests and pushes to master, `invites.yml`
+does the scheduled send. They are separate because a workflow only runs on the triggers it
+declares - `invites.yml` has no `pull_request` trigger, so without `ci.yml` a Dependabot PR
+would arrive with no checks on it at all.
+
 Deployment is `git push` — there is nothing to build or upload.
 
 ## Where this runs
