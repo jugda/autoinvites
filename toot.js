@@ -1,32 +1,52 @@
-const fs = require('fs');
-const moment = require('moment');
-const handlebars = require('handlebars');
-const { login } = require('masto');
+import { readFileSync } from 'node:fs';
+import handlebars from 'handlebars';
+import { createRestAPIClient } from 'masto';
+import { dayMonth, parseStart } from './dates.js';
 
-const masto = login({
-  url: process.env.MASTO_URL,
-  accessToken: process.env.MASTO_TOKEN,
-});
+// Same catch-up windows as the mails, plus a post on the day itself. `same-day` stays an
+// exact match on purpose: it renders "!!!HEUTE!!!", so it must not fire a day late.
+const MILESTONES = [
+  { kind: 'toot-28', from: 26, to: 28 },
+  { kind: 'toot-7', from: 5, to: 7 },
+  { kind: 'toot-2', from: 1, to: 2 },
+  { kind: 'toot-0', from: 0, to: 0 },
+];
 
-const days = [0, 2, 7, 28];
-
-const toot = (ev, day) => {
-  if (days.indexOf(day) > -1) {
-    console.log('prepare toot for event uid ' + ev.uid);
-
-    const source = fs.readFileSync(`templates/twitter_invitation.hbs`, 'utf-8');
-    const template = handlebars.compile(source);
-    ev.day = day === 0 ? '!!!HEUTE!!! ' : moment(ev.start).format('DD.MM.');
-
-    masto.then((client) => {
-      client.v1.statuses.create({
-        status: template(ev),
-        visibility: 'public',
-      }).then((status) => {
-        console.log(`Tooted: ${status.url}`);
-      });
-    });
+let template;
+const render = (data) => {
+  if (!template) {
+    const source = readFileSync(new URL('./templates/mastodon_invitation.hbs', import.meta.url), 'utf-8');
+    template = handlebars.compile(source);
   }
+  return template(data);
 };
 
-module.exports = toot;
+const required = (name) => {
+  const value = process.env[name];
+  if (!value) throw new Error(`missing required environment variable ${name}`);
+  return value;
+};
+
+let client;
+const getClient = () => {
+  client ??= createRestAPIClient({
+    url: required('MASTO_URL'),
+    accessToken: required('MASTO_TOKEN'),
+  });
+  return client;
+};
+
+export const due = (ev, diff) =>
+  MILESTONES.find((m) => diff >= m.from && diff <= m.to) ?? null;
+
+export const compose = (ev, diff) =>
+  render({ ...ev, day: diff === 0 ? '!!!HEUTE!!! ' : dayMonth(parseStart(ev.start)) });
+
+export const send = async (ev, diff) => {
+  const status = await getClient().v1.statuses.create({
+    status: compose(ev, diff),
+    visibility: 'public',
+    language: 'de',
+  });
+  return status.url;
+};

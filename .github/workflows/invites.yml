@@ -1,0 +1,73 @@
+name: Send invites
+
+on:
+  schedule:
+    # Weekday mornings. Deliberately not on the hour: GitHub warns that scheduled runs
+    # "can be delayed during periods of high load" and that "some queued jobs may be
+    # dropped" — the start of every hour is the worst offender.
+    - cron: '23 7 * * 1-5'
+      timezone: 'Europe/Berlin'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Log what would be sent without sending or recording it'
+        type: boolean
+        default: true
+
+# Never let two runs race on the state commit.
+concurrency:
+  group: send-invites
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  invites:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - run: npm test
+
+      - name: Send invites
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+          EVENTS_URL: ${{ vars.EVENTS_URL }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          MASTO_URL: ${{ secrets.MASTO_URL }}
+          MASTO_TOKEN: ${{ secrets.MASTO_TOKEN }}
+        run: npm start
+
+      - name: Persist state
+        if: ${{ always() && inputs.dry_run != true }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add state/sent.json
+          if git diff --cached --quiet; then
+            # Nothing was sent. Scheduled workflows in public repos are disabled after
+            # 60 days without repository activity, so poke the repo before we get there.
+            quiet_days=$(( ( $(date +%s) - $(git log -1 --format=%ct) ) / 86400 ))
+            if [ "$quiet_days" -lt 25 ]; then
+              echo "nothing sent; last activity ${quiet_days}d ago, no keepalive needed"
+              exit 0
+            fi
+            git commit --allow-empty -m 'chore: keepalive so the schedule stays enabled'
+          else
+            git commit -m 'chore: record sent invitations'
+          fi
+          git pull --rebase --autostash
+          git push
