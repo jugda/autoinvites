@@ -3,14 +3,14 @@
   "version": "2.0.0",
   "description": "Automatic email and Mastodon invites based on our events JSON feed.",
   "type": "module",
-  "main": "index.js",
-  "author": "Niko Köbler, https://www.n-k.de, @dasniko",
+  "main": "src/index.js",
+  "author": "Niko K\u00f6bler, https://www.n-k.de, @dasniko",
   "license": "MIT",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
-    "start": "node index.js",
+    "start": "node src/index.js",
     "test": "node --test"
   },
   "dependencies": {

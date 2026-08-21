@@ -15,7 +15,7 @@ const MILESTONES = [
 let template;
 const render = (data) => {
   if (!template) {
-    const source = readFileSync(new URL('./templates/mastodon_invitation.hbs', import.meta.url), 'utf-8');
+    const source = readFileSync(new URL('../templates/mastodon_invitation.hbs', import.meta.url), 'utf-8');
     template = handlebars.compile(source);
   }
   return template(data);

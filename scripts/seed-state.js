@@ -7,8 +7,8 @@
 //
 //   EVENTS_URL=https://www.jug-da.de/events.json node scripts/seed-state.js
 
-import { daysUntil } from '../dates.js';
-import * as state from '../state.js';
+import { daysUntil } from '../src/dates.js';
+import * as state from '../src/state.js';
 
 const OLD_TRIGGERS = [
   { kind: 'announcement', day: 28, mail: true },

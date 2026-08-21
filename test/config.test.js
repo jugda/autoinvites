@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import * as config from '../config.js';
+import * as config from '../src/config.js';
 
 const base = {
   EVENTS_URL: 'https://example.invalid/events.json',

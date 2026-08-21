@@ -40,10 +40,24 @@ Deployment is `git push` — there is nothing to build or upload.
 
 Migrated off AWS Lambda + SES in v2. The apex redirect is the last remaining AWS dependency.
 
+## Layout
+
+```
+src/         the modules; src/index.js is the entry point
+templates/   Handlebars mail + toot bodies, edited by the orga, deliberately not under src/
+state/       sent.json, committed back by the workflow - data, not source
+scripts/     one-off operational scripts
+test/        node:test files, mirroring src/
+```
+
+Modules resolve `templates/` and `state/` **relative to themselves**
+(`new URL('../templates/...', import.meta.url)`), never via the process CWD, so the job
+works regardless of where it is launched from.
+
 ## Architecture
 
-`index.js` fetches the feed, computes `daysUntil(ev.start)` for each event, and asks `mail.js`
-and `toot.js` independently whether a milestone is due. Sends are awaited and recorded one at a
+`src/index.js` fetches the feed, computes `daysUntil(ev.start)` for each event, and asks `src/mail.js`
+and `src/toot.js` independently whether a milestone is due. Sends are awaited and recorded one at a
 time; a failure is collected and reported at the end rather than aborting the remaining events.
 
 **Milestones, not exact days.** Each module owns a `MILESTONES` table of `{ kind, from, to }`
@@ -64,7 +78,7 @@ cause a storm of re-sends.
 
 ### Dates
 
-`dates.js` owns all date handling. Feed timestamps are **naive Berlin wall-clock** with no offset
+`src/dates.js` owns all date handling. Feed timestamps are **naive Berlin wall-clock** with no offset
 (`"2026-08-20T18:30:00"`). They are parsed into UTC-anchored `Date`s and formatted with
 `timeZone: 'UTC'`, so the printed components are exactly what the feed gave us no matter what TZ
 the runner uses. Day counts compare UTC-anchored midnights against "today in Berlin", which keeps
@@ -86,7 +100,7 @@ outright, which dropped every link from the text part.
 
 ## Configuration
 
-`config.js` is the only place that reads `process.env`. It validates once at startup and
+`src/config.js` is the only place that reads `process.env`. It validates once at startup and
 reports *every* missing variable at once, so a misconfigured run fails before it sends
 anything. Everything else takes a plain config object — which is what makes the mail and
 Mastodon paths testable without a live endpoint.

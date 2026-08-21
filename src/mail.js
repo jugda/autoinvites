@@ -16,7 +16,7 @@ const MILESTONES = [
 const templates = new Map();
 const render = (name, data) => {
   if (!templates.has(name)) {
-    const source = readFileSync(new URL(`./templates/${name}.hbs`, import.meta.url), 'utf-8');
+    const source = readFileSync(new URL(`../templates/${name}.hbs`, import.meta.url), 'utf-8');
     templates.set(name, handlebars.compile(source));
   }
   return templates.get(name)(data);

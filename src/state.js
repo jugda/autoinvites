@@ -7,7 +7,7 @@
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 
-const FILE = new URL('./state/sent.json', import.meta.url);
+const FILE = new URL('../state/sent.json', import.meta.url);
 const KEEP_UNKNOWN_FOR_DAYS = 60;
 
 export const load = async () => {
@@ -38,7 +38,7 @@ export const prune = (sent, liveUids, now = new Date()) => {
 };
 
 export const save = async (sent) => {
-  await mkdir(new URL('./state/', import.meta.url), { recursive: true });
+  await mkdir(new URL('../state/', import.meta.url), { recursive: true });
   const ordered = Object.fromEntries([...sent].sort(([a], [b]) => a.localeCompare(b)));
   await writeFile(FILE, `${JSON.stringify({ version: 1, sent: ordered }, null, 2)}\n`, 'utf-8');
 };

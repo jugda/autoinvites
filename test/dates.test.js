@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { dayMonth, daysUntil, longDate, parseStart, shortDate, time } from '../dates.js';
+import { dayMonth, daysUntil, longDate, parseStart, shortDate, time } from '../src/dates.js';
 
 // These are the exact strings moment (locale 'de') produced before it was dropped.
 test('formats German dates the way moment did', () => {

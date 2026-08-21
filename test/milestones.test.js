@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import * as mail from '../mail.js';
-import * as toot from '../toot.js';
-import * as state from '../state.js';
+import * as mail from '../src/mail.js';
+import * as toot from '../src/toot.js';
+import * as state from '../src/state.js';
 
 const event = (extra = {}) => ({ uid: 'e1', start: '2026-08-20T18:30:00', summary: 's', ...extra });
 

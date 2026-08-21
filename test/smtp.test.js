@@ -5,8 +5,8 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { SMTPServer } from 'smtp-server';
-import * as config from '../config.js';
-import * as mail from '../mail.js';
+import * as config from '../src/config.js';
+import * as mail from '../src/mail.js';
 
 const received = [];
 let server;
@@ -79,7 +79,7 @@ test('delivers a real message through a plain authenticated SMTP server', async 
 
 test('rejects a wrong SMTP password rather than silently dropping the mail', async () => {
   // A fresh module registry, because mail.js memoises its transport.
-  const fresh = await import(`../mail.js?wrong-pass`);
+  const fresh = await import(`../src/mail.js?wrong-pass`);
   const cfg = config.load(env({ SMTP_PASS: 'wrong' }));
   await assert.rejects(() => fresh.send(event, fresh.due(event, 7), cfg.mail), /Invalid login|bad credentials/i);
 });
