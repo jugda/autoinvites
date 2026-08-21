@@ -1,9 +1,9 @@
 name: CI
 
 # invites.yml only runs on a schedule, so without this a pull request - a Dependabot
-# bump in particular - would carry no checks at all. Its `npm test` step does gate the
-# send, but a breaking dependency would then surface as invitations quietly not going
-# out, rather than as a red X before the merge.
+# bump in particular - would carry no checks at all. Its test step does gate the send,
+# but a breaking change would then surface as invitations quietly not going out, rather
+# than as a red X before the merge.
 on:
   pull_request:
   push:
@@ -18,11 +18,22 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-java@v5
         with:
-          node-version: '22'
-          cache: 'npm'
+          distribution: temurin
+          java-version: '25'
 
-      - run: npm ci
+      - uses: jbangdev/setup-jbang@v0.1.1
+        with:
+          setup-java: 'false'
 
-      - run: npm test
+      - name: Cache JBang and Maven artifacts
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.jbang
+            ~/.m2/repository
+          key: jbang-${{ runner.os }}-${{ hashFiles('src/Autoinvites.java', 'test/Tests.java') }}
+          restore-keys: jbang-${{ runner.os }}-
+
+      - run: jbang test/Tests.java

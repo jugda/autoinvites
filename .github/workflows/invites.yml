@@ -31,14 +31,27 @@ jobs:
           # full history so the keepalive check and the rebase before push are reliable
           fetch-depth: 0
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-java@v5
         with:
-          node-version: '22'
-          cache: 'npm'
+          distribution: temurin
+          java-version: '25'
 
-      - run: npm ci
+      - uses: jbangdev/setup-jbang@v0.1.1
+        with:
+          # the JDK is already set up above; //JAVA 25 is satisfied by it
+          setup-java: 'false'
 
-      - run: npm test
+      - name: Cache JBang and Maven artifacts
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.jbang
+            ~/.m2/repository
+          # //DEPS lines are the dependency manifest, so they are the cache key
+          key: jbang-${{ runner.os }}-${{ hashFiles('src/Autoinvites.java', 'test/Tests.java') }}
+          restore-keys: jbang-${{ runner.os }}-
+
+      - run: jbang test/Tests.java
 
       - name: Send invites
         env:
@@ -58,7 +71,9 @@ jobs:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           MASTO_TOKEN: ${{ secrets.MASTO_TOKEN }}
-        run: npm start
+        # Run from the checkout root: state/sent.json is resolved against the working
+        # directory. The templates are not - they travel inside the jar via //FILES.
+        run: jbang src/Autoinvites.java
 
       - name: Persist state
         if: ${{ always() && inputs.dry_run != true }}

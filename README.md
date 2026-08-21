@@ -4,8 +4,9 @@ Sends event invitations for the [JUG Darmstadt](https://www.jug-da.de) — by em
 mailing list and as toots to Mastodon — based on the events JSON feed published by
 [jugda.github.io](https://github.com/jugda/jugda.github.io).
 
-Runs as a scheduled GitHub Actions workflow (`.github/workflows/invites.yml`) Monday to
-Saturday, mid-morning, Europe/Berlin.
+A [JBang](https://www.jbang.dev) script - no build tool, no `pom.xml`, dependencies declared
+inline with `//DEPS`. Runs as a scheduled GitHub Actions workflow
+(`.github/workflows/invites.yml`) Monday to Saturday, mid-morning, Europe/Berlin.
 
 ## What gets sent when
 
@@ -45,6 +46,7 @@ point it at any SMTP server that will accept your `MAIL_FROM`.
 | `SMTP_PASS` | secret | with `SMTP_USER` | |
 | `MASTO_TOKEN` | secret | no | access token with `write:statuses` |
 | `DRY_RUN` | — | no | workflow_dispatch input, not stored; log intended sends and send nothing |
+| `STATE_FILE` | — | no | defaults to `state/sent.json`; mainly for local runs |
 
 Config is validated once at startup and reports *all* problems at once, so a bad setup
 fails before anything is sent rather than halfway through.
@@ -56,15 +58,22 @@ tell the difference, so move any of them between the two as you see fit.
 
 ## Running it locally
 
+Needs `jbang` and a JDK 25 (`sdk install java 25.0.2-tem`, `sdk install jbang`). JBang
+resolves the dependencies on first run.
+
 ```bash
-npm install
-npm test
+jbang test/Tests.java          # the whole suite
+./scripts/run-tests.sh         # same thing
 
 # see what would go out, without sending or recording anything
 DRY_RUN=true EVENTS_URL=https://www.jug-da.de/events.json \
   MAIL_TO=you@example.com MAIL_FROM=you@example.com SMTP_HOST=localhost \
-  npm start
+  jbang src/Autoinvites.java
 ```
+
+Run from the repository root: `state/sent.json` is resolved against the working directory
+(override with `STATE_FILE`). The templates are not - they travel inside the built jar via
+the `//FILES` directive.
 
 `workflow_dispatch` on the workflow does the same from the Actions tab, with the dry-run
 box ticked by default.
@@ -76,5 +85,6 @@ passed as sent, so switching over doesn't re-send what the Lambda already delive
 once, immediately before the first live run:
 
 ```bash
-EVENTS_URL=https://www.jug-da.de/events.json node scripts/seed-state.js
+EVENTS_URL=https://www.jug-da.de/events.json \
+  MAIL_TO=x MAIL_FROM=y SMTP_HOST=z jbang scripts/SeedState.java
 ```
