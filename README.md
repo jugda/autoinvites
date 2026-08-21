@@ -4,8 +4,8 @@ Sends event invitations for the [JUG Darmstadt](https://www.jug-da.de) — by em
 mailing list and as toots to Mastodon — based on the events JSON feed published by
 [jugda.github.io](https://github.com/jugda/jugda.github.io).
 
-Runs as a scheduled GitHub Actions workflow (`.github/workflows/invites.yml`) on weekday
-mornings, Europe/Berlin.
+Runs as a scheduled GitHub Actions workflow (`.github/workflows/invites.yml`) Monday to
+Saturday, mid-morning, Europe/Berlin.
 
 ## What gets sent when
 

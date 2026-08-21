@@ -2,10 +2,10 @@ name: Send invites
 
 on:
   schedule:
-    # Weekday mornings. Deliberately not on the hour: GitHub warns that scheduled runs
+    # Monday to Saturday, mid-morning. Deliberately not on the hour: GitHub warns that runs
     # "can be delayed during periods of high load" and that "some queued jobs may be
     # dropped" — the start of every hour is the worst offender.
-    - cron: '23 7 * * 1-5'
+    - cron: '23 10 * * 1-6'
       timezone: 'Europe/Berlin'
   workflow_dispatch:
     inputs:
