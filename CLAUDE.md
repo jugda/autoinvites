@@ -14,11 +14,13 @@ ESM, Node >= 22 (floor set by `masto` 8, which is ESM-only). No build step, no t
 ```bash
 npm install
 npm test                       # node:test, no framework
-node --test test/dates.test.js # single file
-npm start                      # runs one pass; needs the env vars below
-
-DRY_RUN=true EVENTS_URL=https://www.jug-da.de/events.json npm start   # safe, sends nothing
+node --test test/config.test.js  # single file
+npm start                      # one pass; needs the env in README.md
 ```
+
+`test/smtp.test.js` runs a real `smtp-server` on a random port and sends a real message
+through it, so the mail path is covered without touching a live relay. That is the test to
+extend if you change anything about the transport.
 
 Deployment is `git push` — there is nothing to build or upload.
 
@@ -79,12 +81,22 @@ outright, which dropped every link from the text part.
 
 ## Configuration
 
-All via env, injected in the workflow. `EVENTS_URL` is a repo *variable*; everything else is a
-repo *secret*: `MAIL_TO`, `MAIL_FROM`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`,
-`MASTO_URL`, `MASTO_TOKEN`. `DRY_RUN` logs intended sends and skips both sending and persisting.
+`config.js` is the only place that reads `process.env`. It validates once at startup and
+reports *every* missing variable at once, so a misconfigured run fails before it sends
+anything. Everything else takes a plain config object — which is what makes the mail and
+Mastodon paths testable without a live endpoint.
 
-Note the SMTP sender and SPF: `jug-da.de` publishes `v=spf1 include:spf.uberspace.de ~all` and has
-no DMARC record. Sending through anything other than Uberspace is not SPF-aligned.
+Deliberately provider-agnostic: any SMTP host that accepts the configured `MAIL_FROM`
+works. See README.md for the full table. Two details worth keeping:
+
+- `Number(env.SMTP_PORT || 587)` uses `||`, not `??`, because an unset GitHub Actions
+  variable arrives as an **empty string** rather than undefined. Same reasoning behind the
+  empty-string handling in `bool()`. `test/config.test.js` pins this.
+- `SMTP_USER`/`SMTP_PASS` are optional as a pair (relays that authorise by IP), but a user
+  without a password is treated as a misconfiguration rather than anonymous auth. Mastodon
+  is optional the same way — unset both and the toot half just stays off.
+
+SPF/DKIM alignment for whatever relay is configured is handled outside this repo.
 
 ## Cutover
 

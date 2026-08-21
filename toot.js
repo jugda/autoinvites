@@ -21,18 +21,9 @@ const render = (data) => {
   return template(data);
 };
 
-const required = (name) => {
-  const value = process.env[name];
-  if (!value) throw new Error(`missing required environment variable ${name}`);
-  return value;
-};
-
 let client;
-const getClient = () => {
-  client ??= createRestAPIClient({
-    url: required('MASTO_URL'),
-    accessToken: required('MASTO_TOKEN'),
-  });
+const getClient = (mastodon) => {
+  client ??= createRestAPIClient(mastodon);
   return client;
 };
 
@@ -42,8 +33,8 @@ export const due = (ev, diff) =>
 export const compose = (ev, diff) =>
   render({ ...ev, day: diff === 0 ? '!!!HEUTE!!! ' : dayMonth(parseStart(ev.start)) });
 
-export const send = async (ev, diff) => {
-  const status = await getClient().v1.statuses.create({
+export const send = async (ev, diff, mastodon) => {
+  const status = await getClient(mastodon).v1.statuses.create({
     status: compose(ev, diff),
     visibility: 'public',
     language: 'de',

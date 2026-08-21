@@ -22,23 +22,9 @@ const render = (name, data) => {
   return templates.get(name)(data);
 };
 
-const required = (name) => {
-  const value = process.env[name];
-  if (!value) throw new Error(`missing required environment variable ${name}`);
-  return value;
-};
-
 let transport;
-const getTransport = () => {
-  if (!transport) {
-    const port = Number(process.env.SMTP_PORT ?? 587);
-    transport = nodemailer.createTransport({
-      host: required('SMTP_HOST'),
-      port,
-      secure: port === 465, // 587 upgrades via STARTTLS
-      auth: { user: required('SMTP_USER'), pass: required('SMTP_PASS') },
-    });
-  }
+const getTransport = (smtp) => {
+  transport ??= nodemailer.createTransport(smtp);
   return transport;
 };
 
@@ -52,14 +38,14 @@ export const due = (ev, diff) => {
   return milestone;
 };
 
-export const send = async (ev, milestone) => {
+export const send = async (ev, milestone, config) => {
   const at = parseStart(ev.start);
   const html = render(milestone.template, { ...ev, date: longDate(at), time: time(at) });
   const prefix = milestone.kind === 'announcement' ? 'Ankündigung für ' : '';
 
-  const info = await getTransport().sendMail({
-    from: required('MAIL_FROM'),
-    to: required('MAIL_TO'),
+  const info = await getTransport(config.smtp).sendMail({
+    from: config.from,
+    to: config.to,
     subject: `${prefix}${shortDate(at)}: ${ev.summary}`,
     html,
     // `strip` used to just delete the tags, which dropped every link from the text part.

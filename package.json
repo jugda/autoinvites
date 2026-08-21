@@ -19,5 +19,8 @@
     "masto": "^8.0.0",
     "nodemailer": "^9.0.5"
   },
-  "repository": "https://github.com/jugda/autoinvites"
+  "repository": "https://github.com/jugda/autoinvites",
+  "devDependencies": {
+    "smtp-server": "^3.19.3"
+  }
 }

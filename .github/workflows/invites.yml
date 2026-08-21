@@ -43,14 +43,20 @@ jobs:
       - name: Send invites
         env:
           DRY_RUN: ${{ inputs.dry_run }}
+
+          # Non-sensitive, kept as repository *variables* so they are readable and editable.
           EVENTS_URL: ${{ vars.EVENTS_URL }}
+          SMTP_HOST: ${{ vars.SMTP_HOST }}
+          SMTP_PORT: ${{ vars.SMTP_PORT }}       # optional, default 587
+          SMTP_SECURE: ${{ vars.SMTP_SECURE }}   # optional, default: true only on 465
+          MASTO_URL: ${{ vars.MASTO_URL }}
+
+          # Repository *secrets*, so they are masked. Note that Actions logs on a public
+          # repo are world-readable, which is reason enough to keep the addresses here.
           MAIL_TO: ${{ secrets.MAIL_TO }}
           MAIL_FROM: ${{ secrets.MAIL_FROM }}
-          SMTP_HOST: ${{ secrets.SMTP_HOST }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
-          MASTO_URL: ${{ secrets.MASTO_URL }}
           MASTO_TOKEN: ${{ secrets.MASTO_TOKEN }}
         run: npm start
 

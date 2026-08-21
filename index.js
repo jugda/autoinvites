@@ -1,9 +1,8 @@
+import * as config from './config.js';
 import * as mail from './mail.js';
 import * as state from './state.js';
 import * as toot from './toot.js';
 import { daysUntil } from './dates.js';
-
-const DRY_RUN = /^(1|true|yes)$/i.test(process.env.DRY_RUN ?? '');
 
 const fetchEvents = async (url) => {
   const res = await fetch(url, { signal: AbortSignal.timeout(15_000) });
@@ -14,15 +13,15 @@ const fetchEvents = async (url) => {
 };
 
 const main = async () => {
-  const url = process.env.EVENTS_URL;
-  if (!url) throw new Error('missing required environment variable EVENTS_URL');
+  const cfg = config.load();
 
-  const events = await fetchEvents(url);
+  const events = await fetchEvents(cfg.eventsUrl);
   const sent = await state.load();
   const failures = [];
   let delivered = 0;
 
-  console.log(`${events.length} events in feed${DRY_RUN ? ' (DRY_RUN: nothing will be sent)' : ''}`);
+  console.log(`${events.length} events in feed${cfg.dryRun ? ' (DRY_RUN: nothing will be sent)' : ''}`);
+  if (!cfg.mastodon) console.log('MASTO_URL/MASTO_TOKEN unset - not tooting');
 
   for (const ev of events) {
     const diff = daysUntil(ev.start);
@@ -31,18 +30,18 @@ const main = async () => {
     const jobs = [];
     const mailMilestone = mail.due(ev, diff);
     if (mailMilestone) {
-      jobs.push({ kind: mailMilestone.kind, run: () => mail.send(ev, mailMilestone) });
+      jobs.push({ kind: mailMilestone.kind, run: () => mail.send(ev, mailMilestone, cfg.mail) });
     }
-    const tootMilestone = toot.due(ev, diff);
+    const tootMilestone = cfg.mastodon && toot.due(ev, diff);
     if (tootMilestone) {
-      jobs.push({ kind: tootMilestone.kind, run: () => toot.send(ev, diff) });
+      jobs.push({ kind: tootMilestone.kind, run: () => toot.send(ev, diff, cfg.mastodon) });
     }
 
     for (const job of jobs) {
       const entry = state.key(ev.uid, job.kind);
       if (sent.has(entry)) continue;
 
-      if (DRY_RUN) {
+      if (cfg.dryRun) {
         console.log(`would send ${job.kind} for ${ev.uid} (in ${diff}d)`);
         continue;
       }
@@ -59,7 +58,7 @@ const main = async () => {
     }
   }
 
-  if (!DRY_RUN) {
+  if (!cfg.dryRun) {
     state.prune(sent, new Set(events.map((ev) => ev.uid)));
     await state.save(sent);
   }
