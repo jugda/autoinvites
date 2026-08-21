@@ -1,0 +1,34 @@
+version: 2
+
+updates:
+  # The workflow pins actions to major tags, so these PRs are how we notice a new major.
+  # Two majors had already gone by unnoticed when this repo moved off AWS.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: quarterly
+    groups:
+      actions:
+        patterns:
+          - '*'
+    commit-message:
+      prefix: chore
+    open-pull-requests-limit: 99
+    assignees:
+      - dasniko
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: quarterly
+    groups:
+      # Four runtime deps and one dev dep - a single PR per quarter is plenty.
+      npm:
+        patterns:
+          - '*'
+    commit-message:
+      prefix: chore
+      include: scope
+    open-pull-requests-limit: 99
+    assignees:
+      - dasniko
