@@ -29,27 +29,30 @@ since it would be wrong a day late.
 Everything is read from the environment. Nothing is tied to a particular mail provider —
 point it at any SMTP server that will accept your `MAIL_FROM`.
 
-| Variable | Required | Notes |
-| --- | --- | --- |
-| `EVENTS_URL` | yes | e.g. `https://www.jug-da.de/events.json` |
-| `MAIL_TO` | yes | recipient (the mailing list) |
-| `MAIL_FROM` | yes | sender; the SMTP host must allow it |
-| `SMTP_HOST` | yes | hostname of the relay |
-| `SMTP_PORT` | no | default `587` |
-| `SMTP_SECURE` | no | implicit TLS; defaults to true on 465, false otherwise |
-| `SMTP_USER` | no | omit with `SMTP_PASS` for a relay that authorises by IP |
-| `SMTP_PASS` | with `SMTP_USER` | |
-| `MASTO_URL` | no | omit with `MASTO_TOKEN` to disable tooting |
-| `MASTO_TOKEN` | no | access token with `write:statuses` |
-| `DRY_RUN` | no | log intended sends; send and record nothing |
+"Set in" is where the workflow reads each one from, under
+*Settings → Secrets and variables → Actions*:
+
+| Variable | Set in | Required | Notes |
+| --- | --- | --- | --- |
+| `EVENTS_URL` | variable | yes | e.g. `https://www.jug-da.de/events.json` |
+| `SMTP_HOST` | variable | yes | hostname of the relay |
+| `SMTP_PORT` | variable | no | default `587` |
+| `SMTP_SECURE` | variable | no | implicit TLS; defaults to true on 465, false otherwise |
+| `MASTO_URL` | variable | no | omit with `MASTO_TOKEN` to disable tooting |
+| `MAIL_TO` | secret | yes | recipient (the mailing list) |
+| `MAIL_FROM` | secret | yes | sender; the SMTP host must allow it |
+| `SMTP_USER` | secret | no | omit with `SMTP_PASS` for a relay that authorises by IP |
+| `SMTP_PASS` | secret | with `SMTP_USER` | |
+| `MASTO_TOKEN` | secret | no | access token with `write:statuses` |
+| `DRY_RUN` | — | no | workflow_dispatch input, not stored; log intended sends and send nothing |
 
 Config is validated once at startup and reports *all* problems at once, so a bad setup
 fails before anything is sent rather than halfway through.
 
-In the workflow the non-sensitive ones are repository **variables** and the rest are
-**secrets**. That split only affects log masking — which matters, because Actions logs on
-a public repo are world-readable. The code reads plain environment variables, so move any
-of them between the two as you see fit.
+The variable/secret split only affects log masking — which matters here, because Actions
+logs on a public repo are world-readable. The addresses are secrets for that reason rather
+than because they are confidential. The code reads plain environment variables and cannot
+tell the difference, so move any of them between the two as you see fit.
 
 ## Running it locally
 
