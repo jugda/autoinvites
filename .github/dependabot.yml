@@ -6,7 +6,7 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: quarterly
+      interval: monthly
     groups:
       actions:
         patterns:
@@ -20,7 +20,7 @@ updates:
   - package-ecosystem: npm
     directory: /
     schedule:
-      interval: quarterly
+      interval: monthly
     groups:
       # Four runtime deps and one dev dep - a single PR per quarter is plenty.
       npm:
