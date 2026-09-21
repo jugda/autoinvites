@@ -4,8 +4,9 @@ Sends event invitations for the [JUG Darmstadt](https://www.jug-da.de) — by em
 mailing list and as toots to Mastodon — based on the events JSON feed published by
 [jugda.github.io](https://github.com/jugda/jugda.github.io).
 
-Runs as a scheduled GitHub Actions workflow (`.github/workflows/invites.yml`) Monday to
-Saturday, mid-morning, Europe/Berlin.
+Runs as a scheduled workflow Monday to Saturday, mid-morning, Europe/Berlin — on Forgejo
+Actions (`.forgejo/workflows/invites.yml`) and on GitHub Actions
+(`.github/workflows/invites.yml`). See [Running on Forgejo](#running-on-forgejo).
 
 ## What gets sent when
 
@@ -29,8 +30,8 @@ since it would be wrong a day late.
 Everything is read from the environment. Nothing is tied to a particular mail provider —
 point it at any SMTP server that will accept your `MAIL_FROM`.
 
-"Set in" is where the workflow reads each one from, under
-*Settings → Secrets and variables → Actions*:
+"Set in" is where the workflow reads each one from — *Settings → Actions → Secrets* and
+*→ Variables* on Forgejo, *Settings → Secrets and variables → Actions* on GitHub:
 
 | Variable | Set in | Required | Notes |
 | --- | --- | --- | --- |
@@ -53,6 +54,43 @@ The variable/secret split only affects log masking — which matters here, becau
 logs on a public repo are world-readable. The addresses are secrets for that reason rather
 than because they are confidential. The code reads plain environment variables and cannot
 tell the difference, so move any of them between the two as you see fit.
+
+## Running on Forgejo
+
+The workflows exist twice: `.forgejo/workflows/` for Forgejo Actions, `.github/workflows/`
+for GitHub Actions. Forgejo ignores `.github/workflows` entirely as soon as
+`.forgejo/workflows` exists, and GitHub never looks at `.forgejo`, so the two sets coexist
+without either forge picking up the other's copy. The flip side is that a change to one has
+to be made in the other by hand.
+
+**Only one forge may have a live schedule.** Both copies send the same invitations from the
+same feed, each recording into its own `state/sent.json` history — with secrets configured
+on both, every mail and toot goes out twice. Set the variables and secrets on one forge only.
+
+Setting it up on a Forgejo instance:
+
+1. Actions have to be enabled for the instance (`[actions] ENABLED = true`) and for this
+   repository (*Settings → Repository → Advanced Settings → Enable Repository Actions*).
+2. A runner has to be registered with the label `ubuntu-latest`, which is what our
+   instance uses. It is a runner label, not a GitHub image name — forgejo-runner's own
+   default label is `docker`. If your runners are labelled differently, change `runs-on:`
+   in both files under `.forgejo/workflows/`.
+3. Add the variables and secrets from the table above under *Settings → Actions*.
+4. Schedules are only registered from the default branch, so these files have to be on
+   `main` before anything fires. *Actions → Send invites → Run workflow* does a manual run,
+   with the dry-run box ticked by default.
+
+The "Persist state" step commits `state/sent.json` back using the automatic token, which
+therefore needs write access to the repository. If the instance hands out read-only tokens,
+add a personal access token with `write:repository` as a secret and pass it to
+`actions/checkout` as `token:`.
+
+Actions are referenced by full URL (`https://data.forgejo.org/actions/checkout@v7`) instead
+of the bare `actions/checkout@v7`, because the short form resolves against whatever
+`DEFAULT_ACTIONS_URL` the instance happens to be configured with.
+
+`.github/dependabot.yml` is GitHub-only — Forgejo has no equivalent, so dependency bumps on
+that side are manual unless the instance runs a Renovate bot.
 
 ## Running it locally
 

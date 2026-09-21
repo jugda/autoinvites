@@ -1,0 +1,36 @@
+name: CI
+
+# Forgejo counterpart of .github/workflows/ci.yml. Forgejo reads .forgejo/workflows and,
+# as soon as that directory exists, ignores .github/workflows completely - so each forge
+# runs its own copy and neither sees the other's. Keep the two in sync by hand; the
+# differences below are the ones Forgejo actually requires.
+on:
+  pull_request:
+  push:
+    branches: [main]
+    # The invites job commits state/sent.json back to main. Unlike GitHub, Forgejo *does*
+    # start workflows for pushes made with the automatic token, so without this filter
+    # every send would drag a pointless test run behind it.
+    paths-ignore:
+      - 'state/**'
+
+jobs:
+  test:
+    # Label of the runner registered for this repo, not a GitHub image name - it only
+    # reads like one because this instance registered its runner under that label.
+    runs-on: ubuntu-latest
+
+    steps:
+      # Actions are resolved against the instance's DEFAULT_ACTIONS_URL, which an admin can
+      # repoint. Fully qualified URLs say exactly where these come from.
+      - uses: https://data.forgejo.org/actions/checkout@v7
+
+      # No `cache: 'npm'`: that needs the runner's cache server, which is optional in
+      # Forgejo. Five dependencies install fast enough that it isn't worth the dependency.
+      - uses: https://data.forgejo.org/actions/setup-node@v7
+        with:
+          node-version: '22'
+
+      - run: npm ci
+
+      - run: npm test

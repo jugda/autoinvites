@@ -27,13 +27,37 @@ does the scheduled send. They are separate because a workflow only runs on the t
 declares - `invites.yml` has no `pull_request` trigger, so without `ci.yml` a Dependabot PR
 would arrive with no checks on it at all.
 
+Both exist twice, once in `.github/workflows/` and once in `.forgejo/workflows/`. Forgejo
+reads `.forgejo/workflows` and ignores `.github/workflows` the moment that directory exists;
+GitHub never looks at `.forgejo`. So neither forge runs the other's copy - and neither
+notices when the two drift apart, so edits have to be applied on both sides. What the
+Forgejo copies do differently, and why:
+
+- `runs-on: ubuntu-latest` is a *runner label*, not an image name - it matches GitHub's
+  only because the instance registered its runner under that label. forgejo-runner's own
+  default is `docker`, so a second runner elsewhere may well need a different value.
+- Actions are addressed by full URL (`https://data.forgejo.org/actions/checkout@v7`). The
+  bare form resolves against the instance's `DEFAULT_ACTIONS_URL`, which an admin can move.
+- No `cache: 'npm'` on `setup-node`: that needs the runner's cache server, which is optional
+  in Forgejo, and `npm ci` for five dependencies is not worth the extra failure mode.
+- No `permissions:` block - Forgejo has no per-job token scoping.
+- `ci.yml` adds `paths-ignore: ['state/**']` on push. Unlike GitHub, Forgejo *does* start
+  workflows for pushes made with the automatic token, so the state commit would otherwise
+  trigger a test run after every send. (Verified in Forgejo's `matchPushEvent`: `branches`
+  and `paths-ignore` are both supported on push and combine with AND.)
+- The keepalive commit is dropped there. The 60-day rule that disables idle schedules is
+  GitHub's; Forgejo keeps them registered. Keep it in the GitHub copy.
+
+**Never let both forges have a live schedule** - same feed, separate `state/sent.json`
+histories, so every invitation would be sent twice.
+
 Deployment is `git push` — there is nothing to build or upload.
 
 ## Where this runs
 
 | Piece | Platform |
 | --- | --- |
-| this job | GitHub Actions (`.github/workflows/invites.yml`) |
+| this job | Forgejo Actions (`.forgejo/workflows/invites.yml`) or GitHub Actions (`.github/workflows/invites.yml`) - one of the two, never both |
 | `www.jug-da.de` + `events.json` | GitHub Pages (`jugda/jugda.github.io`) |
 | `jug-da.de` apex | still an **AWS S3** redirect bucket → `www` (HTTP only) |
 | mail for `jug-da.de` | Uberspace (`MX fenrir.uberspace.de`), not under our control |

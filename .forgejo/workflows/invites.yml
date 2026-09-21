@@ -1,0 +1,86 @@
+name: Send invites
+
+# Forgejo counterpart of .github/workflows/invites.yml - see .forgejo/workflows/ci.yml for
+# why both exist side by side. IMPORTANT: this and the GitHub copy are the same job. If the
+# repo still lives on GitHub with its secrets in place, disable the schedule on one of the
+# two, or every invitation goes out twice.
+on:
+  schedule:
+    # Monday to Saturday, mid-morning. Deliberately not on the hour, so a busy runner queue
+    # doesn't push the run into the next milestone window. Forgejo skips a scheduled run
+    # that falls into the spring-forward gap and runs it twice on the autumn repeat - both
+    # harmless here, since milestones fire on windows and are recorded in state/sent.json.
+    - cron: '23 10 * * 1-6'
+      timezone: 'Europe/Berlin'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Log what would be sent without sending or recording it'
+        type: boolean
+        default: true
+
+# Never let two runs race on the state commit.
+concurrency:
+  group: send-invites
+  cancel-in-progress: false
+
+# No `permissions:` block: Forgejo has no per-job token scoping, the automatic token simply
+# carries the repo access the instance grants it. The push below relies on that being write.
+
+jobs:
+  invites:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@v7
+        with:
+          # full history so the rebase before the push is reliable
+          fetch-depth: 0
+          # checkout keeps the automatic token in .git/config, which is what lets the
+          # "Persist state" step push. If this instance hands out read-only tokens, add a
+          # PAT with write:repository as a secret and pass it here as `token:`.
+
+      - uses: https://data.forgejo.org/actions/setup-node@v7
+        with:
+          node-version: '22'
+
+      - run: npm ci
+
+      - run: npm test
+
+      - name: Send invites
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+
+          # Non-sensitive, kept as repository *variables* so they are readable and editable.
+          EVENTS_URL: ${{ vars.EVENTS_URL }}
+          SMTP_HOST: ${{ vars.SMTP_HOST }}
+          SMTP_PORT: ${{ vars.SMTP_PORT }}       # optional, default 587
+          SMTP_SECURE: ${{ vars.SMTP_SECURE }}   # optional, default: true only on 465
+          MASTO_URL: ${{ vars.MASTO_URL }}
+
+          # Repository *secrets*, so they are masked in the logs.
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          MASTO_TOKEN: ${{ secrets.MASTO_TOKEN }}
+        run: npm start
+
+      - name: Persist state
+        if: ${{ always() && inputs.dry_run != true }}
+        run: |
+          # Cosmetic only - point the address at this instance's noreply domain if you want
+          # the commits to carry the bot's avatar.
+          git config user.name 'forgejo-actions'
+          git config user.email 'forgejo-actions@noreply.localhost'
+          git add state/sent.json
+          if git diff --cached --quiet; then
+            # Nothing was sent. No keepalive commit here: the 60-day rule that disables
+            # idle schedules is GitHub's, Forgejo keeps them registered indefinitely.
+            echo 'nothing sent, nothing to commit'
+            exit 0
+          fi
+          git commit -m 'chore: record sent invitations'
+          git pull --rebase --autostash
+          git push
